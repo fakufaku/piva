@@ -1,0 +1,78 @@
+{% set name = "piva" %}
+{% set version = "v0.0.1a" %}
+
+package:
+  name: "{{ name }}"
+  version: "{{ environ.get('GIT_DESCRIBE_TAG', 'dev') }}"
+
+build:
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
+  {% if environ.get('GIT_DESCRIBE_NUMBER', '0') == '0' %}string: py{{ environ.get('PY_VER').replace('.', '') }}_0
+  {% else %}string: py{{ environ.get('PY_VER').replace('.', '') }}_{{ environ.get('GIT_BUILD_STR', 'GIT_STUB') }}{% endif %}
+
+source:
+  git_url: ../
+  #git_url: "https://github.com/fakufaku/piva.git"
+  #git_url: "git@github.com:fakufaku/piva.git"
+  #git_rev: "{{ version }}"
+
+requirements:
+  build:
+    - python
+    - cmake>=3.11
+    - {{ compiler('cxx') }}
+    - pybind11
+    - xtensor
+    - xsimd
+    - xtensor-python
+    - xtensor-blas
+    - xtensor-fftw
+    - xtensor-io
+    - tbb-devel
+    - libsndfile
+    - tbb-devel
+    - fftw >=3.0
+    - numpy
+    - mkl
+    - mkl-include
+  host:
+    - python
+    - pybind11
+    - xtensor
+    - xsimd
+    - xtensor-python
+    - xtensor-blas
+    - xtensor-fftw
+    - xtensor-io
+    - tbb-devel
+    - libsndfile
+    - fftw >=3.0
+    - numpy
+    - mkl
+    - mkl-include
+  run:
+    - python
+    - pybind11
+    - tbb
+    - numpy
+    - scipy
+    - mkl-service
+    - mkl
+    - vs2015_runtime  # [win]
+
+test:
+  imports:
+    - piva
+
+about:
+  home: "https://github.com/fakufaku/piva/"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Fast blind source separation library"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - fakufaku

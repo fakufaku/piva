@@ -1,0 +1,29 @@
+name: piva
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - numpy
+  - scipy>=0.18.0
+  - mkl-service
+  - matplotlib
+  - seaborn>=0.9.0
+  - pandas
+  - ipython
+  - cmake>=3.11
+  - pybind11
+  - openblas
+  - xtensor
+  - xsimd
+  - xtensor-python
+  - xtensor-blas>=0.17.2
+  - xtensor-fftw
+  - xtensor-io
+  - tbb
+  - tbb-devel
+  - cython
+  - pip
+  - pip:
+    - mir_eval
+    - sounddevice
+    - pyroomacoustics==0.1.23

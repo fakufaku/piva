@@ -1,0 +1,57 @@
+name: piva
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 9
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.5, 3.6, 3.7]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup mini-conda
+      uses: goanpeca/setup-miniconda@v1.0.2
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python-version }}
+        activate-environment: piva
+        environment-file: environment.yml
+    - name: Conda info
+      shell: bash -l {0}
+      run: conda info
+    - name: Conda list
+      shell: pwsh
+      run: conda list
+    - name: Set PATH
+      run: echo "::add-path::C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64"
+      if: matrix.os == 'windows-latest'
+    - name: Force use of VS2015 on Windows
+      shell: pwsh
+      run: |
+        echo "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x64
+        set DISTUTILS_USE_SDK=1
+        set MSSdk=1
+      if: matrix.os == 'windows-latest'
+    - name: Build package
+      shell: bash -l {0}
+      run: |
+        python ./setup.py build_ext --inplace
+    - name: Publish to anaconda.org
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      shell: bash -l {0}
+      env:
+        ANACONDA_USERNAME: ${{ secrets.ANACONDA_ORG_USERNAME }}
+        ANACONDA_PASSWORD: ${{ secrets.ANACONDA_ORG_PASSWORD }}
+      run: |
+        conda install conda-build anaconda-client
+        cd conda.recipe
+        conda config --set anaconda_upload yes
+        anaconda login --username $INPUT_ANACONDAUSERNAME --password $INPUT_ANACONDAPASSWORD
+        conda build . -c conda-forge
+        anaconda logout
