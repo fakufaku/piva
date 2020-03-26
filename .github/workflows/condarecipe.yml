@@ -52,6 +52,6 @@ jobs:
         conda install conda-build anaconda-client
         cd conda.recipe
         conda config --set anaconda_upload yes
-        anaconda login --username $INPUT_ANACONDAUSERNAME --password $INPUT_ANACONDAPASSWORD
+        anaconda login --username $ANACONDA_USERNAME --password $ANACONDA_PASSWORD
         conda build . -c conda-forge
         anaconda logout
