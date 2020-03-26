@@ -1,5 +1,5 @@
 {% set name = "piva" %}
-{% set version = "v0.0.1a" %}
+{% set version = "v0.0.1a-test" %}
 
 package:
   name: "{{ name }}"
